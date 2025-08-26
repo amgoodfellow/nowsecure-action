@@ -15,6 +15,7 @@ jobs:
         name: NowSecure upload app
         uses: amgoodfellow/nowsecure-action/upload-app@main
         with:
+          analysis_type: "static"
           api_url: ${{ vars.API_URL }}
           lab_api_url: ${{ vars.LAB_API_URL }}
           group_id: ${{ vars.GROUP_ID }}
