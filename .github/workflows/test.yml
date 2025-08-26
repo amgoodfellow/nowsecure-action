@@ -34,9 +34,10 @@ jobs:
         timeout-minutes: 60
         with:
           report_id: ${{ needs.scan.outputs.report_id }}
-
-          platform_token: ${{ secrets.PLATFORM_TOKEN }}
+          api_url: ${{ vars.API_URL }}
+          lab_api_url: ${{ vars.LAB_API_URL }}
           group_id: ${{ vars.GROUP_ID }}
+          platform_token: ${{ secrets.PLATFORM_TOKEN }}
 
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v1
