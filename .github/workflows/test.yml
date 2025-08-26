@@ -21,7 +21,7 @@ jobs:
           mv *.apk demo.apk
       - id: upload
         name: NowSecure upload app
-        uses: amgoodfellow/nowsecure-action/upload-action@main
+        uses: amgoodfellow/nowsecure-action/upload-app@main
         with:
           api_url: ${{ vars.API_URL }}
           lab_api_url: ${{ vars.LAB_API_URL }}
