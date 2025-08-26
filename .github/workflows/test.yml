@@ -15,7 +15,6 @@ jobs:
         name: NowSecure upload app
         uses: amgoodfellow/nowsecure-action/upload-app@main
         with:
-          analysis_type: "static"
           api_url: ${{ vars.API_URL }}
           lab_api_url: ${{ vars.LAB_API_URL }}
           group_id: ${{ vars.GROUP_ID }}
@@ -41,6 +40,6 @@ jobs:
           platform_token: ${{ secrets.PLATFORM_TOKEN }}
 
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v1
+        uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: NowSecure.sarif
