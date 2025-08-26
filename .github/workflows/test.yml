@@ -1,0 +1,52 @@
+name: Builder
+
+on:
+  workflow_dispatch:
+
+jobs: 
+  scan:
+    runs-on: ubuntu-latest
+    outputs:
+      report_id: ${{ steps.upload.outputs.report_id }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Replace with whatever pulls the application file before we upload.
+      - name: Download application
+        run: |
+          echo $PWD
+          curl --request GET "https://github.com/OWASP/mastg/actions/runs/17187361650/artifacts/3837425148" --output demo.apk.zip
+          unzip demo.apk.zip
+          mv *.apk demo.apk
+      - id: upload
+        name: NowSecure upload app
+        uses: ../../upload-app
+        with:
+          api_url: ${{ vars.API_URL }}
+          lab_api_url: ${{ vars.LAB_API_URL }}
+          group_id: ${{ vars.GROUP_ID }}
+          platform_token: ${{ secrets.PLATFORM_TOKEN }}
+          app_file: "./demo.apk"
+  process:
+    if: ${{ needs.scan.outputs.report_id }}
+    runs-on: ubuntu-latest
+    # The above stage we introduced.
+    needs: scan
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: NowSecure download report
+        uses: ../../convert-sarif
+        timeout-minutes: 60
+        with:
+          report_id: ${{ needs.scan.outputs.report_id }}
+
+          platform_token: ${{ secrets.PLATFORM_TOKEN }}
+          group_id: ${{ vars.GROUP_ID }}
+
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: NowSecure.sarif
