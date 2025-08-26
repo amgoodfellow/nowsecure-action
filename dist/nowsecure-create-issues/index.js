@@ -76474,6 +76474,7 @@ const platformGql = (reportId) => `{
       platformType
       packageKey
       taskId
+      score
       applicationRef
       ref
       report {
@@ -76736,6 +76737,7 @@ function run() {
         const repo = getRepo();
         const platform = (0, utils_1.platformConfig)();
         const ns = new nowsecure_client_1.NowSecure(platform);
+        const minimumScore = parseInt(core.getInput("minimum_score"), -1);
         const reportId = core.getInput("report_id");
         console.log(`Fetching NowSecure report with ID: ${reportId}`);
         const jobConfig = config.getConfig(configName, "issues");
@@ -76744,6 +76746,12 @@ function run() {
         // GitHub Actions will handle the timeout for us in the event something goes awry.
         const data = yield ns.pollForReport(reportId, pollInterval);
         const assessment = (_b = (_a = data === null || data === void 0 ? void 0 : data.data) === null || _a === void 0 ? void 0 : _a.auto) === null || _b === void 0 ? void 0 : _b.assessments[0];
+        const score = assessment === null || assessment === void 0 ? void 0 : assessment.score;
+        if (minimumScore > -1) {
+            if (score < minimumScore) {
+                core.setFailed(`Score: ${score} is less than minimum_score: ${minimumScore}`);
+            }
+        }
         const report = assessment === null || assessment === void 0 ? void 0 : assessment.report;
         if (!report) {
             throw new Error("No report data");
@@ -77412,6 +77420,7 @@ function riskLine(platform, assessment, finding, findingToIssueMap) {
     return line;
 }
 function githubJobSummaryShort(platform, assessment, findingToIssueMap) {
+    var _a, _b, _c;
     const grouping = { pass: [], fail: [] };
     const findingsGroupedBy = assessment.report.findings.reduce((acc, finding) => {
         var _a;
@@ -77431,7 +77440,7 @@ function githubJobSummaryShort(platform, assessment, findingToIssueMap) {
     const results = [
         [":white_check_mark: Pass", findingsGroupedBy.pass.length.toString()],
         [":red_circle: Fail", findingsGroupedBy.fail.length.toString()],
-        [":bricks: Dependencies", assessment.deputy.components.length.toString()],
+        [":bricks: Dependencies", ((_c = (_b = (_a = assessment.deputy) === null || _a === void 0 ? void 0 : _a.components) === null || _b === void 0 ? void 0 : _b.length) === null || _c === void 0 ? void 0 : _c.toString()) || "0"],
     ];
     const formatDetail = (findings) => findings
         .map((finding) => riskLine(platform, assessment, finding, findingToIssueMap))

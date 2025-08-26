@@ -48463,6 +48463,7 @@ const platformGql = (reportId) => `{
       platformType
       packageKey
       taskId
+      score
       applicationRef
       ref
       report {
@@ -48697,6 +48698,7 @@ const action_utils_1 = __nccwpck_require__(5213);
 const utils_1 = __nccwpck_require__(6252);
 const nowsecure_summary_1 = __nccwpck_require__(6359);
 function run() {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const reportId = core.getInput("report_id");
         console.log(`Processing report with ID: ${reportId}`);
@@ -48708,17 +48710,24 @@ function run() {
             if (isNaN(pollInterval)) {
                 pollInterval = 60000;
             }
+            const minimumScore = parseInt(core.getInput("minimum_score"), -1);
             const enableSarif = core.getBooleanInput("enable_sarif");
             const enableDependencies = core.getBooleanInput("enable_dependencies");
             const githubToken = core.getInput("github_token");
             const githubCorrelator = core.getInput("github_correlator");
             const ns = new nowsecure_client_1.NowSecure(platform);
             const report = yield ns.pollForReport(reportId, pollInterval);
+            const score = (_a = report.data.auto.assessments[0]) === null || _a === void 0 ? void 0 : _a.score;
             if (enableDependencies) {
                 yield (0, action_utils_1.outputToDependencies)(report, github.context, githubCorrelator);
             }
             if (enableSarif) {
                 yield (0, action_utils_1.outputToSarif)(report, jobConfig.key, jobConfig.filter, platform);
+            }
+            if (minimumScore > -1) {
+                if (score < minimumScore) {
+                    core.setFailed(`Score: ${score} is less than minimum_score: ${minimumScore}`);
+                }
             }
             if (jobConfig.summary !== "none") {
                 (0, nowsecure_summary_1.githubJobSummary)(jobConfig.summary, platform, report.data.auto.assessments[0], null);
@@ -49345,6 +49354,7 @@ function riskLine(platform, assessment, finding, findingToIssueMap) {
     return line;
 }
 function githubJobSummaryShort(platform, assessment, findingToIssueMap) {
+    var _a, _b, _c;
     const grouping = { pass: [], fail: [] };
     const findingsGroupedBy = assessment.report.findings.reduce((acc, finding) => {
         var _a;
@@ -49364,7 +49374,7 @@ function githubJobSummaryShort(platform, assessment, findingToIssueMap) {
     const results = [
         [":white_check_mark: Pass", findingsGroupedBy.pass.length.toString()],
         [":red_circle: Fail", findingsGroupedBy.fail.length.toString()],
-        [":bricks: Dependencies", assessment.deputy.components.length.toString()],
+        [":bricks: Dependencies", ((_c = (_b = (_a = assessment.deputy) === null || _a === void 0 ? void 0 : _a.components) === null || _b === void 0 ? void 0 : _b.length) === null || _c === void 0 ? void 0 : _c.toString()) || "0"],
     ];
     const formatDetail = (findings) => findings
         .map((finding) => riskLine(platform, assessment, finding, findingToIssueMap))
