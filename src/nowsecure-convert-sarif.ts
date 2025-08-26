@@ -29,6 +29,7 @@ async function run() {
       pollInterval = 60000;
     }
 
+    const minimumScore = parseInt(core.getInput("minimum_score"), -1);
     const enableSarif = core.getBooleanInput("enable_sarif");
     const enableDependencies = core.getBooleanInput("enable_dependencies");
     const githubToken = core.getInput("github_token");
@@ -36,6 +37,7 @@ async function run() {
     const ns = new NowSecure(platform);
 
     const report = await ns.pollForReport(reportId, pollInterval);
+    const score = report.data.auto.assessments[0]?.score
 
     if (enableDependencies) {
       await outputToDependencies(report, github.context, githubCorrelator);
@@ -43,6 +45,12 @@ async function run() {
 
     if (enableSarif) {
       await outputToSarif(report, jobConfig.key, jobConfig.filter, platform);
+    }
+          
+    if (minimumScore > -1) {
+      if (score < minimumScore) {
+        core.setFailed(`Score: ${score} is less than minimum_score: ${minimumScore}`)
+      }
     }
 
     if (jobConfig.summary !== "none") {

@@ -45,6 +45,9 @@ inputs:
   repo_owner:
     required: false
     description: "The owner of the GitHub repository used to create issues. Defaults to the owner of the repo running the action"
+  minimum_score:
+    required: false
+    description: "Defines the score under which an assessment will fail"
 runs:
   using: "node20"
   main: "../dist/nowsecure-create-issues/index.js"

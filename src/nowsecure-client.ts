@@ -49,6 +49,7 @@ const platformGql = (reportId: string): string => `{
       platformType
       packageKey
       taskId
+      score
       applicationRef
       ref
       report {

@@ -76,6 +76,7 @@ export interface Assessment {
   platformType: string;
   packageKey: string;
   taskId: string;
+  score: number | null;
   applicationRef: string;
   ref: string;
   report: Report | null;

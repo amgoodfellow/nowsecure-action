@@ -62,6 +62,7 @@ export async function run() {
   const platform = platformConfig();
   const ns = new NowSecure(platform);
 
+  const minimumScore = parseInt(core.getInput("minimum_score"), -1);
   const reportId = core.getInput("report_id");
   console.log(`Fetching NowSecure report with ID: ${reportId}`);
 
@@ -74,6 +75,14 @@ export async function run() {
   const data = await ns.pollForReport(reportId, pollInterval);
 
   const assessment = data?.data?.auto?.assessments[0];
+  const score = assessment?.score;
+
+  if (minimumScore > -1) {
+    if (score < minimumScore) {
+      core.setFailed(`Score: ${score} is less than minimum_score: ${minimumScore}`)
+    }
+  }
+
   const report = assessment?.report;
   if (!report) {
     throw new Error("No report data");
