@@ -11,14 +11,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
-      # Replace with whatever pulls the application file before we upload.
-      - name: Download application
-        run: |
-          echo $PWD
-          curl --request GET "https://github.com/OWASP/mastg/actions/runs/17187361650/artifacts/3837425148" --output demo.apk.zip
-          unzip demo.apk.zip
-          mv *.apk demo.apk
       - id: upload
         name: NowSecure upload app
         uses: amgoodfellow/nowsecure-action/upload-app@main
