@@ -33,11 +33,11 @@ scan:
   needs: build
   steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v5
 
     # Replace with whatever pulls the application file before we upload.
     - name: Download application
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v5
       with:
         # Generated in the "build" stage.
         name: app
@@ -63,7 +63,7 @@ process:
   needs: scan
   steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v5
 
     - name: NowSecure download report
       uses: nowsecure/nowsecure-action/convert-sarif@v3
@@ -75,7 +75,7 @@ process:
         group_id: "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
 
     - name: Upload SARIF file
-      uses: github/codeql-action/upload-sarif@v1
+      uses: github/codeql-action/upload-sarif@v3
       with:
         sarif_file: NowSecure.sarif
 ```
