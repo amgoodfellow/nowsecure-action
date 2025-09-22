@@ -6,23 +6,28 @@ To use this action an active NowSecure Platform account is required. If you **_a
 
 ## Prerequisites
 
-- A NowSecure Platform token
-  - To generate a token in the UI: click on your profile on the upper right corner, select "Tokens", add a name for the token and then select "Create token"
-- A NowSecure Group ID
-  - To find your group ID in the UI: click "Admin" at the top of the screen, select "Groups", click the group you wish to run assessments in and then click the copy icon to copy the group ID
+- Get a token from your NowSecure platform instance. More information on this can be found in the 
+[NowSecure Support Portal](https://support.nowsecure.com/hc/en-us/articles/7499657262093-Creating-a-NowSecure-Platform-API-Bearer-Token)
+
+- Identify the ID of the group in NowSecure Platform that you want your assessment to be included in. 
+More information on this can be found in the 
+[NowSecure Support Portal](https://support.nowsecure.com/hc/en-us/articles/38057956447757-Retrieve-Reference-and-ID-Numbers-for-API-Use-Task-ID-Group-App-and-Assessment-Ref). 
+
+- Add a [GitHub Actions Secret](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets) to your project named, `NS_TOKEN` and add the token created above.  
+
 - (For GHAS integration) An active GitHub account (cloud or on-prem) with an active Advanced Security feature
 
 ## Basic Configuration
 
 ### For a New Workflow
 
-For the easiest setup, see the [example annotated workflow](../workflows/basic.yml).
+For the easiest setup, see the [example annotated workflow](../workflows/basic-example.yml).
 
 ### For an Existing Workflow
 
 > Note: For line-of-code identification, `ripgrep` must be available in the runner. For Ubuntu images, add a step for `apt-get install -y ripgrep`.
 
-After the stage that builds your application (e.g. called `build`), create a new stage called `scan`:
+After the stage that builds your application, create a new stage called `scan`:
 
 ```yml
 scan:

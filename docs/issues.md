@@ -6,7 +6,7 @@ See the [Getting Started](./getting-started.md) guide for prerequisites.
 
 ## For a New Workflow
 
-For the easiest setup, see our [example annotated issues workflow](../workflows/issues.yml).
+For the easiest setup, see our [example annotated issues workflow](../workflows/issues-example.yml).
 
 ## For an Existing Workflow
 
