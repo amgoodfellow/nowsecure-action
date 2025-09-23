@@ -47,6 +47,9 @@ jobs:
           yarn prepare-release
 
       - run: |
+          cp .github/workflows/examples/* ./workflows
+
+      - run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git commit -m "Build $(git rev-parse --short HEAD)" -a
