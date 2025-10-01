@@ -66,7 +66,6 @@ jobs:
         with:
           # TODO: Make sure you change these to your actual values
           platform_token: ${{ secrets.NS_TOKEN }}
-          analysis_type: static
           group_id: ${{ vars.NS_GROUP }}
           app_file: ./MASTG-DEMO-0031.apk
 
@@ -97,7 +96,6 @@ jobs:
           # TODO: Make sure you change these to your actual values
           platform_token: ${{ secrets.NS_TOKEN }}
           group_id: ${{ vars.NS_GROUP }}
-          minimum_score: ${{ vars.MIN_SCORE }}
 
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v3
